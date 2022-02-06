@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import TaskFilters from '../task-filters';
-import './app-footer.css';
+import './footer.css';
 
-function AppFooter({
+function Footer({
   doneCount, clearTasks, filter, onFilterChange,
 }) {
-  let todoCount = 'Задач нет';
+  let todoCount = 'Нет задач!';
   if (doneCount) {
     todoCount = `${doneCount} items left`;
   }
@@ -23,18 +23,18 @@ function AppFooter({
   );
 }
 
-AppFooter.defaultProps = {
+Footer.defaultProps = {
   doneCount: 0,
   clearTasks: () => {},
   filter: 'all',
   onFilterChange: () => {},
 };
 
-AppFooter.propTypes = {
+Footer.propTypes = {
   filter: PropTypes.string,
   doneCount: PropTypes.number,
   clearTasks: PropTypes.func,
   onFilterChange: PropTypes.func,
 };
 
-export default AppFooter;
+export default Footer;

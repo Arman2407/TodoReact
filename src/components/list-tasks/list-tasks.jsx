@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Task from '../app-task';
-import './app-list-tasks.css';
+import Task from '../task';
+import './list-tasks.css';
 
-function TaskList({
+function ListTasks({
   todos,
   onCompleted,
   onEdited,
@@ -14,23 +14,15 @@ function TaskList({
   const newTask = todos.map((item) => {
     const {
       id,
-      description,
-      time,
-      done,
-      edit,
     } = item;
     return (
       <Task
+        key={id}
         onCompleted={() => onCompleted(id)}
         onDeleted={() => onDeleted(id)}
         onEdited={() => onEdited(id)}
         onEdit={onEdit}
-        id={id}
-        key={id}
-        description={description}
-        time={time}
-        done={done}
-        edit={edit}
+        {...item}
       />
     );
   });
@@ -38,7 +30,7 @@ function TaskList({
   return <ul className="todo-list">{newTask}</ul>;
 }
 
-TaskList.defaultProps = {
+ListTasks.defaultProps = {
   todos: [],
   onCompleted: () => {},
   onEdited: () => {},
@@ -46,7 +38,7 @@ TaskList.defaultProps = {
   onDeleted: () => {},
 };
 
-TaskList.propTypes = {
+ListTasks.propTypes = {
   todos: PropTypes.instanceOf(Array),
   onCompleted: PropTypes.func,
   onEdited: PropTypes.func,
@@ -54,4 +46,4 @@ TaskList.propTypes = {
   onDeleted: PropTypes.func,
 };
 
-export default TaskList;
+export default ListTasks;

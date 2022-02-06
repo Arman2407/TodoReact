@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 
-import AppMain from '../app-main';
-import AppHeader from '../app-header';
+import Header from '../header';
 import './app.css';
+import ListTasks from '../list-tasks';
+import Footer from '../footer';
 
 export default class App extends Component {
   maxId = 100;
@@ -12,13 +13,14 @@ export default class App extends Component {
     filter: 'all',
   };
 
-  addItem = (description) => {
+  addItem = (description, allSeconds) => {
     const newItem = {
       description,
       time: Date.now(),
       done: false,
       edit: false,
       id: this.maxId++,
+      allSeconds,
     };
 
     this.setState(({ tasks }) => {
@@ -103,24 +105,27 @@ export default class App extends Component {
 
   render() {
     const { tasks, filter } = this.state;
-
     const activeItems = this.filterItems(tasks, filter);
     const doneCount = tasks.filter((el) => !el.done).length;
 
     return (
       <section className="todoapp">
-        <AppHeader onAddItem={this.addItem} />
-        <AppMain
-          todos={activeItems}
-          onCompleted={this.onCompleted}
-          onDeleted={this.onDeleted}
-          doneCount={doneCount}
-          onEdited={this.onEdited}
-          onEdit={this.onEdit}
-          clearTasks={this.clearTasks}
-          filter={filter}
-          onFilterChange={this.onFilterChange}
-        />
+        <Header onAddItem={this.addItem} />
+        <section className="main">
+          <ListTasks
+            todos={activeItems}
+            onCompleted={this.onCompleted}
+            onDeleted={this.onDeleted}
+            onEdit={this.onEdit}
+            onEdited={this.onEdited}
+          />
+          <Footer
+            doneCount={doneCount}
+            clearTasks={this.clearTasks}
+            filter={filter}
+            onFilterChange={this.onFilterChange}
+          />
+        </section>
       </section>
     );
   }
