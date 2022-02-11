@@ -1,39 +1,32 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
 import Header from '../header';
 import './app.css';
 import ListTasks from '../list-tasks';
 import Footer from '../footer';
 
-export default class App extends Component {
-  maxId = 100;
+export default function App() {
+  const [tasks, setTasks] = useState([]);
+  const [filter, setFilter] = useState('all');
 
-  state = {
-    tasks: [],
-    filter: 'all',
-  };
-
-  addItem = (description, allSeconds) => {
+  const addItem = (description, allSeconds) => {
+    let maxId = 100;
     const newItem = {
       description,
       time: Date.now(),
       done: false,
       edit: false,
-      id: this.maxId++,
+      id: maxId++,
       allSeconds,
     };
 
-    this.setState(({ tasks }) => {
-      const newTasks = [...tasks];
-      newTasks.push(newItem);
+    const newTasks = [...tasks];
+    newTasks.push(newItem);
 
-      return {
-        tasks: newTasks,
-      };
-    });
+    setTasks(newTasks);
   };
 
-  onDataChange = (id, array, typeChange, props) => {
+  const onDataChange = (id, array, typeChange, props) => {
     const idx = array.findIndex((el) => el.id === id);
     const newTasks = [...array];
     if (typeChange === 'change') {
@@ -47,51 +40,37 @@ export default class App extends Component {
     return newTasks;
   };
 
-  onCompleted = (id) => {
-    this.setState(({ tasks }) => ({
-      tasks: this.onDataChange(id, tasks, 'change', 'done'),
-    }));
+  const onCompleted = (id) => {
+    setTasks(onDataChange(id, tasks, 'change', 'done'));
   };
 
-  onEdited = (id) => {
-    this.setState(({ tasks }) => ({
-      tasks: this.onDataChange(id, tasks, 'change', 'edit'),
-    }));
+  const onEdited = (id) => {
+    setTasks(onDataChange(id, tasks, 'change', 'edit'));
   };
 
-  onEdit = (id, newText) => {
-    this.setState(({ tasks }) => {
-      const idx = tasks.findIndex((el) => el.id === id);
-      const newTasks = [...tasks];
-      newTasks[idx].description = newText;
-      return {
-        tasks: newTasks,
-      };
-    });
+  const onEdit = (id, newText) => {
+    const idx = tasks.findIndex((el) => el.id === id);
+    const newTasks = [...tasks];
+    newTasks[idx].description = newText;
+    setTasks(newTasks);
   };
 
-  onDeleted = (id) => {
-    this.setState(({ tasks }) => ({
-      tasks: this.onDataChange(id, tasks, 'deleted'),
-    }));
+  const onDeleted = (id) => {
+    setTasks(onDataChange(id, tasks, 'deleted'));
   };
 
-  clearTasks = () => {
-    this.setState(({ tasks }) => {
-      let newTasks = [...tasks];
-      newTasks = newTasks.filter((el) => !el.done);
-      return {
-        tasks: newTasks,
-      };
-    });
+  const clearTasks = () => {
+    let newTasks = [...tasks];
+    newTasks = newTasks.filter((el) => !el.done);
+    setTasks(newTasks);
   };
 
-  onFilterChange = (filter) => {
-    this.setState({ filter });
+  const onFilterChange = (filterNew) => {
+    setFilter(filterNew);
   };
 
-  filterItems(arr, filter) {
-    switch (filter) {
+  function filterItems(arr, filterNew) {
+    switch (filterNew) {
       case 'all':
         return arr;
       case 'active':
@@ -103,30 +82,27 @@ export default class App extends Component {
     }
   }
 
-  render() {
-    const { tasks, filter } = this.state;
-    const activeItems = this.filterItems(tasks, filter);
-    const doneCount = tasks.filter((el) => !el.done).length;
+  const activeItems = filterItems(tasks, filter);
+  const doneCount = tasks.filter((el) => !el.done).length;
 
-    return (
-      <section className="todoapp">
-        <Header onAddItem={this.addItem} />
-        <section className="main">
-          <ListTasks
-            todos={activeItems}
-            onCompleted={this.onCompleted}
-            onDeleted={this.onDeleted}
-            onEdit={this.onEdit}
-            onEdited={this.onEdited}
-          />
-          <Footer
-            doneCount={doneCount}
-            clearTasks={this.clearTasks}
-            filter={filter}
-            onFilterChange={this.onFilterChange}
-          />
-        </section>
+  return (
+    <section className="todoapp">
+      <Header onAddItem={addItem} />
+      <section className="main">
+        <ListTasks
+          todos={activeItems}
+          onCompleted={onCompleted}
+          onDeleted={onDeleted}
+          onEdit={onEdit}
+          onEdited={onEdited}
+        />
+        <Footer
+          doneCount={doneCount}
+          clearTasks={clearTasks}
+          filter={filter}
+          onFilterChange={onFilterChange}
+        />
       </section>
-    );
-  }
+    </section>
+  );
 }

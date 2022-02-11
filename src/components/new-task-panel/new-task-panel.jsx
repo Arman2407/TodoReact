@@ -1,71 +1,58 @@
 /* eslint-disable id-length */
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import './new-task-panel.css';
 
-export default class NewTaskPanel extends Component {
-  static defaultProps = {
-    onAddItem: () => {},
+export default function NewTaskPanel(props) {
+  const [description, setDescription] = useState('');
+  const [placeholder, setPlaceholder] = useState('What needs to be done?');
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
+  const onDescriptionChange = (event) => {
+    setDescription(event.target.value);
   };
 
-  state = {
-    description: '',
-    placeholder: 'What needs to be done?',
-    minutes: 0,
-    seconds: 0,
-  };
-
-  onDescriptionChange = (event) => {
-    this.setState({
-      description: event.target.value,
-    });
-  };
-
-  onChangeMin = (e) => {
+  const onChangeMin = (e) => {
     const toSeconds = e.target.value * 60;
 
-    this.setState({
-      minutes: toSeconds,
-    });
+    setMinutes(toSeconds);
   };
 
-  onChangeSec = (e) => {
-    this.setState({
-      seconds: e.target.value,
-    });
+  const onChangeSec = (e) => {
+    setSeconds(e.target.value);
   };
 
-  onSubmit = (event) => {
+  const onSubmit = (event) => {
     event.preventDefault();
 
-    this.props.onAddItem(this.state.description, Number(this.state.minutes) + Number(this.state.seconds));
-    this.setState({
-      description: '',
-      placeholder: 'What needs to be done?',
-    });
+    props.onAddItem(description, Number(minutes) + Number(seconds));
+    setDescription('');
+    setPlaceholder('What needs to be done?');
 
     event.target.reset();
   };
 
-  render() {
-    const { placeholder } = this.state;
-    return (
-      <form className="new-todo-form" onSubmit={this.onSubmit}>
-        <input
-          type="text"
-          className="new-todo"
-          placeholder={placeholder}
-          onChange={this.onDescriptionChange}
-          value={this.state.description}
-        />
-        <input className="new-todo-form__timer" type="number" placeholder="Min" min="0" onChange={this.onChangeMin} />
-        <input className="new-todo-form__timer" type="number" placeholder="Sec" min="0" max="59" onChange={this.onChangeSec} />
-        <input type="submit" className="hidden" />
-      </form>
-    );
-  }
+  return (
+    <form className="new-todo-form" onSubmit={onSubmit}>
+      <input
+        type="text"
+        className="new-todo"
+        placeholder={placeholder}
+        onChange={onDescriptionChange}
+        value={description}
+      />
+      <input className="new-todo-form__timer" type="number" placeholder="Min" min="0" onChange={onChangeMin} />
+      <input className="new-todo-form__timer" type="number" placeholder="Sec" min="0" max="59" onChange={onChangeSec} />
+      <input type="submit" className="hidden" />
+    </form>
+  );
 }
+
+NewTaskPanel.defaultProps = {
+  onAddItem: () => {},
+};
 
 NewTaskPanel.propTypes = {
   onAddItem: PropTypes.func,
